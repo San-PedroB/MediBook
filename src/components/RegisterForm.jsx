@@ -14,15 +14,17 @@ import { triggerAnimation } from '../utils/animationUtils';
 //Utils
 import { passwordsMatch } from '../utils/passwordUtils';
 import { validateFields } from '../utils/formUtils';
+import useFormField from '../hooks/useFormField';
 
 //-------------------------------------------------------------------
 
 function RegisterForm() {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [companyName, setCompanyName] = useState('');
+  const fullName = useFormField();
+  const email = useFormField();
+  const password = useFormField();
+  const confirmPassword = useFormField();
+  const companyName = useFormField();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -32,7 +34,7 @@ function RegisterForm() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    const fields = [fullName, email, password, confirmPassword, companyName];
+    const fields = [fullName.value, email.value, password.value, confirmPassword.value, companyName.value];
 
     if(!validateFields(fields)){
       setErrorMessage("Complete todo los campos")
@@ -40,19 +42,19 @@ function RegisterForm() {
       return;
     }
 
-    if(!passwordsMatch(password, confirmPassword)){
+    if(!passwordsMatch(password.value, confirmPassword.value)){
       setErrorMessage("Las contraseñas no coinciden");
       triggerAnimation(errorRef, 'animate__headShake');
 
-      setPassword('');
-      setConfirmPassword('');
+      password.reset();
+      confirmPassword.reset();
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      await registerAdmin({ fullName, email, password, companyName });
+      await registerAdmin({ fullName:fullName.value, email:email.value, password:password.value, companyName:companyName.value });
       console.log("Administrador registrado exitosamente 🚀");
       navigate("/login");
     } catch (error) {
@@ -67,15 +69,11 @@ function RegisterForm() {
       <div className="card p-4" style={{ width: '100%', maxWidth: '400px' }}>
         <h2 className="text-center mb-4">Registro</h2>
         <form onSubmit={handleRegister}>
-          <NameInput
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            label="Nombre completo"
-          />
-          <EmailInput value={email} onChange={(e) => setEmail(e.target.value)} label="Correo electrónico" />
-          <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} label="Contraseña" />
-          <PasswordInput value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} label="Confirmar contraseña" />
-          <NameInput value={companyName} onChange={(e) => setCompanyName(e.target.value)} label="Nombre de la empresa" />
+          <NameInput {...fullName} label="Nombre completoooooo"/>
+          <EmailInput {...email} label="Correo electrssssógggggnico" />
+          <PasswordInput {...password} label="Contraseña" />
+          <PasswordInput {...confirmPassword} label="Confirmar Contraseña" />
+          <NameInput {...companyName} label="Nombre de la empresa" />
           <ErrorMessage message={errorMessage} forwardedRef={errorRef} />
           <div className="d-grid">
             <SubmitButton isSubmitting={isSubmitting} text="Registrarse" />

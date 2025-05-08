@@ -34,7 +34,7 @@ function RegisterForm() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    const fields = [fullName, email, password, confirmPassword, companyName];
+    const fields = [fullName.value, email.value, password.value, confirmPassword.value, companyName.value];
 
     if(!validateFields(fields)){
       setErrorMessage("Complete todo los campos")
@@ -69,11 +69,11 @@ function RegisterForm() {
       <div className="card p-4" style={{ width: '100%', maxWidth: '400px' }}>
         <h2 className="text-center mb-4">Registro</h2>
         <form onSubmit={handleRegister}>
-          <NameInput {...NameInput} label="Nombre completoooooo"/>
-          <EmailInput {...EmailInput} label="Correo electrssssógggggnico" />
-          <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} label="Contraseña" />
-          <PasswordInput value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} label="Confirmar contraseña" />
-          <NameInput value={companyName} onChange={(e) => setCompanyName(e.target.value)} label="Nombre de la empresa" />
+          <NameInput {...fullName} label="Nombre completoooooo"/>
+          <EmailInput {...email} label="Correo electrssssógggggnico" />
+          <PasswordInput {...password} label="Contraseña" />
+          <PasswordInput {...confirmPassword} label="Confirmar Contraseña" />
+          <NameInput {...companyName} label="Nombre de la empresa" />
           <ErrorMessage message={errorMessage} forwardedRef={errorRef} />
           <div className="d-grid">
             <SubmitButton isSubmitting={isSubmitting} text="Registrarse" />
