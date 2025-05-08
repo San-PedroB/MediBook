@@ -5,8 +5,7 @@ import Footer from './components/Footer';
 import Login from './views/Login';
 import Register from './views/Register';
 import Menu from './views/Menu';
-import Test from './views/Test'
-import ViewTest from './views/ViewTest'
+import Dashboard from './views/Dashboard'
 
 
 
@@ -21,8 +20,7 @@ function App() {
             <Route path="login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/menu" element={<Menu />} />
-            <Route path="/test" element={<Test />} />
-            <Route path="/view-test" element={<ViewTest />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
         </main>
         <Footer />

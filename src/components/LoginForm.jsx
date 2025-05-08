@@ -1,5 +1,9 @@
 import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+
+//firebase
+
+import { loginUser } from '../services/firebaseService';
 
 //Micro componentes
 import EmailInput from './forms/EmailInput';
@@ -22,11 +26,24 @@ function LoginForm() {
 
   const handleLogin = (e) => {
     e.preventDefault();
+
+    const fields = [emailField.value, passwordField.value];
+
     if (!validateFields([emailField.value, passwordField.value])) {
-      setErrorMessage("Complete todos los campos");
+      setErrorMessage("Complete todoss los campos");
       triggerAnimation(errorRef, 'animate__headShake');
       return;
     }
+
+  try{
+    loginUser({email:emailField.value, password:passwordField.value })
+    console.log("Login correcto! 🚀");
+    Navigate("/dashboard");
+  }
+  catch(error){
+    console.error("Error al ingresar", error.message);
+  }
+
   };
     return (
       <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: '70vh' }}>
