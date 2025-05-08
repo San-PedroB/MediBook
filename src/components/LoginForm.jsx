@@ -40,7 +40,7 @@ function LoginForm() {
             forwardedRef={errorRef}
           />
             <div className="d-grid">
-              <button type="submit" className="btn btn-primary">Entraaaaaar</button>
+              <button type="submit" className="btn btn-primary">Entrar</button>
             </div>
             <div className="text-center mt-3">
               <Link to="/register" className="btn btn-link">¿Quieres registrar a tu empresa? Click aquí</Link>
