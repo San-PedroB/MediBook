@@ -34,7 +34,7 @@ export async function registerAdmin({ fullName, email, password, companyName }) 
 /**
  * Inicia sesión con email y contraseña
  */
-export async function loginUser(email, password) {
+export async function loginUser({ email, password }) {
   const userCredential = await signInWithEmailAndPassword(auth, email, password);
   return userCredential.user;
 }

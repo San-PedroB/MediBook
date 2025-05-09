@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 //firebase
 
@@ -17,14 +17,15 @@ import useFormField from '../hooks/useFormField';
 //Utils
 import { validateFields } from '../utils/formUtils';
 
-
 function LoginForm() {
   const emailField = useFormField();
   const passwordField = useFormField();
   const [errorMessage, setErrorMessage] = useState ('')
   const errorRef = useRef(null)
 
-  const handleLogin = (e) => {
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     const fields = [emailField.value, passwordField.value];
@@ -36,13 +37,12 @@ function LoginForm() {
     }
 
   try{
-    loginUser({email:emailField.value, password:passwordField.value })
+    await loginUser({ email:emailField.value, password:passwordField.value })
     console.log("Login correcto! 🚀");
-    Navigate("/dashboard");
-  }
-  catch(error){
+    navigate("/dashboard");
+  } catch(error){
     console.error("Error al ingresar", error.message);
-  }
+  } 
 
   };
     return (

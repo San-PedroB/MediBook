@@ -10,7 +10,6 @@ import SubmitButton from './forms/SubmitButton';
 import ErrorMessage from './forms/ErrorMessage';
 import { triggerAnimation } from '../utils/animationUtils';
 
-
 //Utils
 import { passwordsMatch } from '../utils/passwordUtils';
 import { validateFields } from '../utils/formUtils';
@@ -62,15 +61,15 @@ function RegisterForm() {
     } finally {
       setIsSubmitting(false);
     }
+    
   };
-
   return (
     <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: '70vh' }}>
       <div className="card p-4" style={{ width: '100%', maxWidth: '400px' }}>
         <h2 className="text-center mb-4">Registro</h2>
         <form onSubmit={handleRegister}>
-          <NameInput {...fullName} label="Nombre completoooooo"/>
-          <EmailInput {...email} label="Correo electrssssógggggnico" />
+          <NameInput {...fullName} label="Nombre completo"/>
+          <EmailInput {...email} label="Correo electronico" />
           <PasswordInput {...password} label="Contraseña" />
           <PasswordInput {...confirmPassword} label="Confirmar Contraseña" />
           <NameInput {...companyName} label="Nombre de la empresa" />
@@ -82,6 +81,5 @@ function RegisterForm() {
       </div>
     </div>
   );
-}
-
+};
 export default RegisterForm;
