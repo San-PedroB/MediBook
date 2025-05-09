@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 }
+
+/* estilos agregador por daniel  */
+.logo-img {
+  width: 115px;
+  height: 115px;
+  margin-left: -300px;
+
+}
