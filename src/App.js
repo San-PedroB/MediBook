@@ -6,26 +6,41 @@ import Login from './views/Login';
 import UserRegister from './views/UserRegister';
 import AdminDashboard from './views/AdminDashboard';
 import CreateAgent from './views/CreateAgent';
-
+import { AuthProvider } from './context/AuthContext';
+import PrivateRoute from './routes/PrivateRoute';
 
 
 function App() {
   return (
-    <BrowserRouter>
-      <div className="d-flex flex-column min-vh-100">
-        <Navbar />
-        <main className="flex-fill">
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="login" element={<Login />} />
-            <Route path="/register" element={<UserRegister />} />
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            <Route path="/create-agent" element={<CreateAgent />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="d-flex flex-column min-vh-100">
+          <Navbar />
+          <main className="flex-fill">
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<UserRegister />} />
+              <Route path="/admin-dashboard"
+                element={
+                  <PrivateRoute>
+                    <AdminDashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="/create-agent"
+                element={
+                  <PrivateRoute>
+                    <CreateAgent />
+                  </PrivateRoute>
+                }
+              />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

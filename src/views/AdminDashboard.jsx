@@ -41,11 +41,18 @@ useEffect(() => {
               <div className="card-body text-center">
                 <h5 className="card-title">Agentes</h5>
                 <p className="card-text">Gestiona tus agentes y asigna roles.</p>
-                <button className="btn btn-outline-primary" onClick={() => navigate("/create-agent")}>
-                  Crear Agente
-                </button>
-              </div>
-            </div>
+      
+                <div className="d-grid gap-2">
+                  <button
+                    className="btn btn-outline-primary"
+                    onClick={() => navigate("/create-agent")}>
+                    Crear Agente
+                  </button>
+                  <button className="btn btn-primary" onClick={() => navigate("/agents")}>
+                  Ver Agentes </button>
+                </div>
+                </div>
+                </div>
           </div>
 
           <div className="col-md-4">

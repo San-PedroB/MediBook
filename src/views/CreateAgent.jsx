@@ -1,9 +1,8 @@
 // src/views/Register.jsx
-
+import { auth } from "../firebase/firebaseConfig";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerAgent } from "../services/firebaseService";
-import { auth } from "../firebase/firebaseConfig";
 
 // Microcomponentes
 import NameInput from "../components/formElements/NameInput";
@@ -17,7 +16,7 @@ import { validateFields } from "../utils/formUtils";
 import { passwordsMatch } from "../utils/passwordUtils";
 import { triggerAnimation } from "../utils/animationUtils";
 
-function Register() {
+function CreateAgent() {
   const fullName = useFormField();
   const email = useFormField();
   const password = useFormField();
@@ -28,44 +27,62 @@ function Register() {
   const errorRef = useRef(null);
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
+const handleRegister = async (e) => {
+  e.preventDefault();
 
-    const fields = [fullName.value, email.value, password.value, confirmPassword.value];
+  const fields = [fullName.value, email.value, password.value, confirmPassword.value];
 
-    if (!validateFields(fields)) {
-      setErrorMessage("Complete todos los campos");
-      triggerAnimation(errorRef, "animate__headShake");
-      return;
-    }
+  if (!validateFields(fields)) {
+    setErrorMessage("Complete todos los campos");
+    triggerAnimation(errorRef, "animate__headShake");
+    return;
+  }
 
-    if (!passwordsMatch(password.value, confirmPassword.value)) {
-      setErrorMessage("Las contraseñas no coinciden");
-      triggerAnimation(errorRef, "animate__headShake");
-      password.reset();
-      confirmPassword.reset();
-      return;
-    }
+  if (!passwordsMatch(password.value, confirmPassword.value)) {
+    setErrorMessage("Las contraseñas no coinciden");
+    triggerAnimation(errorRef, "animate__headShake");
+    password.reset();
+    confirmPassword.reset();
+    return;
+  }
 
-    setIsSubmitting(true);
+  setIsSubmitting(true);
 
-    try {
-      const currentUser = auth.currentUser;
-      await registerAgent({
-        fullName: fullName.value,
-        email: email.value,
-        password: password.value,
-        companyId: `company-${currentUser.uid}`,
-      });
+  const currentUserBefore = auth.currentUser;
+  console.log("ANTES:", currentUserBefore?.uid, currentUserBefore?.email);
+try {
+  const currentUser = auth.currentUser;
 
-      navigate("/admin-dashboard");
-    } catch (error) {
-      setErrorMessage("Error al registrar agente");
-      console.error(error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  if (!currentUser) {
+    console.log("❌ No hay usuario autenticado");
+    setErrorMessage("Debes estar autenticado para registrar un agente.");
+    return;
+  }
+
+  console.log("✅ Usuario autenticado:", currentUser.uid);
+
+  // Refresca el token explícitamente
+  const token = await currentUser.getIdToken(true);
+  console.log("✅ Token refrescado:", token);
+
+  const result = await registerAgent({
+    fullName: fullName.value,
+    email: email.value,
+    password: password.value,
+  });
+
+  console.log("✅ Agente registrado correctamente:", result); // <-- este es clave
+
+  navigate("/admin-dashboard");
+
+} catch (error) {
+  console.error("❌ Error desde frontend al registrar agente:", error); // <-- este también
+  setErrorMessage("Error al registrar agente");
+}
+
+};
+
+
 
   return (
     <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "70vh" }}>
@@ -89,4 +106,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default CreateAgent;
