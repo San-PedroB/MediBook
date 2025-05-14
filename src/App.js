@@ -8,6 +8,8 @@ import AdminDashboard from './views/AdminDashboard';
 import CreateAgent from './views/CreateAgent';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './routes/PrivateRoute';
+import Agents from './views/Agents';
+import EditAgent from './views/EditAgent';
 
 
 function App() {
@@ -28,10 +30,24 @@ function App() {
                   </PrivateRoute>
                 }
               />
+              <Route path="/agents"
+                element={
+                  <PrivateRoute>
+                    <Agents />
+                  </PrivateRoute>
+                }
+              />
               <Route path="/create-agent"
                 element={
                   <PrivateRoute>
                     <CreateAgent />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="/edit-agent/:id"
+                element={
+                  <PrivateRoute>
+                    <EditAgent />
                   </PrivateRoute>
                 }
               />

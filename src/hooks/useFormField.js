@@ -2,15 +2,21 @@ import { useState } from 'react';
 
 const useFormField = (initialValue = '') => {
   const [value, setValue] = useState(initialValue);
-  function onChange(e) {
+
+  const onChange = (e) => {
     setValue(e.target.value);
   };
-  function reset(){
-    setValue("")
-  }  
-  
 
-  return { value, onChange, reset };
+  const reset = () => {
+    setValue('');
+  };
+
+  return {
+    value,
+    setValue,
+    onChange,
+    reset,
+  };
 };
 
 export default useFormField;

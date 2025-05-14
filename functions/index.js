@@ -2,6 +2,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const express = require("express");
 const cors = require("cors");
+const corsHandler = cors({ origin: true }); // permite cualquier origen
 
 admin.initializeApp();
 
@@ -12,8 +13,7 @@ app.use(cors({ origin: "*" }));
 app.use(express.json());
 
 app.post("/", async (req, res) => {
-  res.set("Access-Control-Allow-Origin", "*");
-  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
   console.log("📥 Solicitud recibida:", req.body);
 
   const authHeader = req.headers.authorization;
@@ -61,5 +61,52 @@ app.post("/", async (req, res) => {
   }
 });
 
-// 📤 Exportar como función HTTP (🔥 versión clásica que evita tu error)
+//******************************************************************* */
+
+exports.updateAgentPasswordHttp = functions.https.onRequest((req, res) => {
+  corsHandler(req, res, async () => {
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Método no permitido" });
+    }
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "No autorizado" });
+    }
+
+    const idToken = authHeader.split("Bearer ")[1];
+
+    let decodedToken;
+    try {
+      decodedToken = await admin.auth().verifyIdToken(idToken);
+    } catch (error) {
+      console.error("❌ Token inválido:", error);
+      return res.status(401).json({ error: "Token inválido" });
+    }
+
+    const requesterUid = decodedToken.uid;
+    const requesterDoc = await admin.firestore().collection("users").doc(requesterUid).get();
+
+    if (!requesterDoc.exists || requesterDoc.data().role !== "admin") {
+      return res.status(403).json({ error: "No tienes permiso para esta acción" });
+    }
+
+    const { agentId, newPassword } = req.body;
+
+    if (!agentId || !newPassword) {
+      return res.status(400).json({ error: "Faltan datos obligatorios" });
+    }
+
+    try {
+      await admin.auth().updateUser(agentId, { password: newPassword });
+      return res.status(200).json({ success: true });
+    } catch (error) {
+      console.error("❌ Error al actualizar contraseña del agente:", error);
+      return res.status(500).json({ error: "Error al actualizar la contraseña" });
+    }
+  });
+});
+
+
+// Exportar como función HTTP
 exports.createAgentUserHttp = functions.https.onRequest(app);

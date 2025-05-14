@@ -1,22 +1,9 @@
-import { auth, db, app } from "../firebase/firebaseConfig";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut
-} from "firebase/auth";
-import {
-  setDoc,
-  getDoc,
-  doc,
-  serverTimestamp
-} from "firebase/firestore";
+import { auth, db } from "../firebase/firebaseConfig";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { setDoc, getDoc, doc, serverTimestamp, deleteDoc, query, collection, where, orderBy, getDocs, updateDoc } from "firebase/firestore";
 
 
-import { getFunctions, httpsCallable } from "firebase/functions";
-const functions = getFunctions(app, "us-central1"); // ✅ explícitamente a tu región
-
-
-// 🔐 Crea un nuevo agente usando una Cloud Function protegida
+// Crea un nuevo agente usando una Cloud Function protegida
 export async function registerAgent({ fullName, email, password }) {
   const currentUser = auth.currentUser;
   if (!currentUser) {
@@ -45,8 +32,7 @@ export async function registerAgent({ fullName, email, password }) {
 }
 
 
-
-// ✅ Registro del administrador directamente (sin función en la nube)
+// Registro del administrador
 export async function registerAdmin({ fullName, email, password, companyName }) {
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
   const user = userCredential.user;
@@ -68,6 +54,67 @@ export async function loginUser({ email, password }) {
   const userCredential = await signInWithEmailAndPassword(auth, email, password);
   return userCredential.user;
 }
+
+/**
+ * Elimina un agente por su ID (uid de Firebase Auth)
+ */
+export async function deleteAgentById(agentId) {
+  try {
+    await deleteDoc(doc(db, "users", agentId));
+    return { success: true };
+  } catch (error) {
+    console.error("❌ Error al eliminar agente desde firebaseService:", error);
+    throw error;
+  }
+}
+
+export async function getAgentsByCompanyId(companyId) {
+  try {
+    const q = query(
+      collection(db, "users"),
+      where("role", "==", "agent"),
+      where("companyId", "==", companyId),
+      orderBy("createdAt", "desc")
+    );
+
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (error) {
+    console.error("❌ Error al obtener agentes desde firebaseService:", error);
+    throw error;
+  }
+}
+
+/**
+ * Modifica un agente por su ID 
+ */
+export async function updateAgentById(agentId, updatedFields) {
+  const agentRef = doc(db, "users", agentId);
+  await updateDoc(agentRef, updatedFields);
+}
+
+/**
+ * Modifica contraseña de agente 
+ */
+export async function updateAgentPassword({ agentId, newPassword, token }) {
+  const response = await fetch("https://us-central1-medibook-60739.cloudfunctions.net/updateAgentPasswordHttp", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ agentId, newPassword }),
+  });
+
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || "Error al actualizar la contraseña");
+  return result;
+}
+
+
 
 // 🔍 Obtener datos del usuario actual
 export async function getCurrentUserData() {
