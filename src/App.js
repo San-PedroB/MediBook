@@ -10,6 +10,9 @@ import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './routes/PrivateRoute';
 import Agents from './views/Agents';
 import EditAgent from './views/EditAgent';
+import AnimatedBackground from './components/animatedbackground/AnimatedBackground';
+import 'bootstrap/dist/css/bootstrap.min.css'; // importa los estilos CSS
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'; 
 
 
 function App() {
@@ -19,6 +22,7 @@ function App() {
         <div className="d-flex flex-column min-vh-100">
           <Navbar />
           <main className="flex-fill">
+          <AnimatedBackground/>
             <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/login" element={<Login />} />
