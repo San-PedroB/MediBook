@@ -63,6 +63,8 @@ function UserRegister() {
         companyName: companyName.value,
       });
 
+      localStorage.setItem("userName", fullName.value);
+
       navigate("/login");
     } catch (error) {
       setErrorMessage("Error al registrar administrador");
